@@ -12,10 +12,12 @@ pipeline {
     JFROG_CLI_BUILD_NAME = "${env.JOB_NAME}"
     JFROG_CLI_BUILD_NUMBER = "${env.BUILD_NUMBER}"
     UPLOAD_LOCATION = "java-web-app/"
+    BRANCH_NAME
   }
   stages {
     stage('Build') {
       steps {
+        sh 'echo Branch Name: $BRANCH_NAME'
         sh './mvnw clean install'
       }
       post {
@@ -38,13 +40,13 @@ pipeline {
       steps {
         script {
           def server = Artifactory.server 'artifactory'
-          def uploadSpec = """{{
+          def uploadSpec = """{
             "files": [{
               "pattern": "(*.zip | *.tar.gz | *.jar)",
               "target": "${env.UPLOAD_LOCATION}",
               "recursive": "true",
               "flat": "false",
-              "props": "Version=${UPLOAD_LOCATION};Branch=${env.BRANCH_NAME}"
+              "props": "Version=${env.BUILD_NUMBER};Branch=${env.BRANCH_NAME}"
             }]
           }"""
 

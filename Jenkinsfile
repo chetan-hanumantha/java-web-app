@@ -12,7 +12,7 @@ pipeline {
     JFROG_CLI_BUILD_NAME = "${env.JOB_NAME}"
     JFROG_CLI_BUILD_NUMBER = "${env.BUILD_NUMBER}"
     UPLOAD_LOCATION = "java-web-app/"
-    BRANCH_NAME
+    BRANCH_NAME =
   }
   stages {
     stage('Build') {
@@ -46,7 +46,7 @@ pipeline {
               "target": "${env.UPLOAD_LOCATION}",
               "recursive": "true",
               "flat": "false",
-              "props": "Version=${env.BUILD_NUMBER};Branch=${env.BRANCH_NAME}"
+              "props": "Version=${env.BUILD_NUMBER};JobName=${env.JOB_NAME}"
             }]
           }"""
 

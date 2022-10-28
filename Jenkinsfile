@@ -41,10 +41,10 @@ pipeline {
           def uploadSpec = """{{
             "files": [{
               "pattern": "(*.zip | *.tar.gz | *.jar)",
-              "target": "${UPLOAD_LOCATION}/${BRANCH_NAME}/",
+              "target": "${env.UPLOAD_LOCATION}/${env.BRANCH_NAME}/",
               "recursive": "true",
               "flat": "false",
-              "props": "Version=${Version};Branch=${BRANCH_NAME}"
+              "props": "Version=${env.BUILD_NUMBER};Branch=${env.BRANCH_NAME}"
             }]
           }"""
 

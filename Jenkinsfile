@@ -25,8 +25,9 @@ pipeline {
     }
     stage('Upload to Artifactory') {
       steps {
-        sh 'echo "Job Name is ${env.JOB_NAME}"'
-        sh 'echo "Build Number is ${env.BUILD_NUMBER}"'
+        echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
+        echo "Job Name is ${env.JOB_NAME}"
+        echo "Build Number is ${env.BUILD_NUMBER}"
         sh 'jfrog rt ping'
         sh 'jfrog rt upload --url http://http://localhost:8082/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} target/demo-0.0.1-SNAPSHOT.jar java-web-app/'
         sh 'jfrog rt bp' // publish build info

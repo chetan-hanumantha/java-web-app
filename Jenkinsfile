@@ -12,12 +12,12 @@ pipeline {
     JFROG_CLI_BUILD_NAME = "${env.JOB_NAME}"
     JFROG_CLI_BUILD_NUMBER = "${env.BUILD_NUMBER}"
     UPLOAD_LOCATION = "java-web-app/"
-    BRANCH_NAME = "${env.BRANCH_NAME}"
+    BUILD_BRANCH = "${env.BRANCH_NAME}"
   }
   stages {
     stage('Build') {
       steps {
-        sh 'echo Branch Name: ${env.BRANCH_NAME}'
+        sh 'echo Branch Name: ${env.BUILD_BRANCH}'
         sh './mvnw clean install'
       }
       post {

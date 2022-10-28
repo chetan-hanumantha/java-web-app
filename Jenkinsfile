@@ -16,7 +16,7 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh 'echo Branch Name: ${env.GIT_BRANCH}'
+        echo "Branch Name: ${env.GIT_BRANCH}"
         sh './mvnw clean install'
       }
       post {

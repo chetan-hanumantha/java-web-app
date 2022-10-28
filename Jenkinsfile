@@ -11,6 +11,7 @@ pipeline {
     ARTIFACTORY_ACCESS_TOKEN = credentials('artifactory-access-token')
     JFROG_CLI_BUILD_NAME = "${env.JOB_NAME}"
     JFROG_CLI_BUILD_NUMBER = "${env.BUILD_NUMBER}"
+    UPLOAD_LOCATION = "java-web-app/"
   }
   stages {
     stage('Build') {
@@ -19,18 +20,36 @@ pipeline {
       }
       post {
         success {
-            archiveArtifacts 'target/*.jar'
+          archiveArtifacts 'target/*.jar'
         }
       }
     }
-    stage('Upload to Artifactory') {
+//     stage('Upload to Artifactory') {
+//       steps {
+//         echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
+//         echo "Job Name is ${env.JOB_NAME}"
+//         echo "Build Number is ${env.BUILD_NUMBER}"
+//         sh '/opt/homebrew/bin/jfrog rt ping --url http://localhost:8081/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN}'
+//         sh '/opt/homebrew/bin/jfrog rt upload --url http://localhost:8081/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} target/demo-0.0.1-SNAPSHOT.jar java-web-app/'
+//         sh '/opt/homebrew/bin/jfrog rt bp --url http://localhost:8081/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN}' // publish build info
+//       }
+//     }
+    stage('Upload') {
       steps {
-        echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
-        echo "Job Name is ${env.JOB_NAME}"
-        echo "Build Number is ${env.BUILD_NUMBER}"
-        sh '/opt/homebrew/bin/jfrog rt ping --url http://localhost:8081/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN}'
-        sh '/opt/homebrew/bin/jfrog rt upload --url http://localhost:8081/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} target/demo-0.0.1-SNAPSHOT.jar java-web-app/'
-        sh '/opt/homebrew/bin/jfrog rt bp --url http://localhost:8081/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN}' // publish build info
+        script {
+          def server = Artifactory.server 'artifactory'
+          def uploadSpec = """{{
+            "files": [{
+              "pattern": "(*.zip | *.tar.gz | *.jar)",
+              "target": "${UPLOAD_LOCATION}/${BRANCH_NAME}/",
+              "recursive": "true",
+              "flat": "false",
+              "props": "Version=${Version};Branch=${BRANCH_NAME}"
+            }]
+          }"""
+
+          server.upload(uploadSpec)
+        }
       }
     }
   }

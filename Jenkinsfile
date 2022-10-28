@@ -30,7 +30,7 @@ pipeline {
         echo "Build Number is ${env.BUILD_NUMBER}"
         sh '/opt/homebrew/bin/jfrog rt ping --url http://localhost:8081/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN}'
         sh '/opt/homebrew/bin/jfrog rt upload --url http://localhost:8081/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} target/demo-0.0.1-SNAPSHOT.jar java-web-app/'
-        sh '/opt/homebrew/bin/jfrog rt bp' // publish build info
+        sh '/opt/homebrew/bin/jfrog rt bp --url http://localhost:8081/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN}' // publish build info
       }
     }
   }
